@@ -29,7 +29,22 @@
                 <p class="mt-2">{{ $post->caption }}</p>
 
                 <div class="mt-3 text-sm text-gray-600 flex gap-4">
-                    <span>{{ $post->likes_count }} Like</span>
+                    @if ($post->likes->contains('user_id', auth()->id()))
+                        <form action="{{ route('posts.unlike', $post) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-600 font-medium">
+                                ❤️ {{ $post->likes_count }} Batal Suka
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ route('posts.like', $post) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="text-gray-600 hover:text-red-600">
+                                🤍 {{ $post->likes_count }} Suka
+                            </button>
+                        </form>
+                    @endif
                     <span>{{ $post->comments_count }} Komentar</span>
                     <a href="{{ route('posts.show', $post) }}" class="text-blue-600">Detail</a>
 

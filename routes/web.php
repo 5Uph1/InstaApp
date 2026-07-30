@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,9 @@ Route::get('/dashboard', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('posts', PostController::class);
+
+    Route::post('posts/{post}/like', [LikeController::class, 'store'])->name('posts.like');
+    Route::delete('posts/{post}/like', [LikeController::class, 'destroy'])->name('posts.unlike');
 });
 
 Route::middleware('auth')->group(function () {
