@@ -7,59 +7,81 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // GET /posts -> Feed
     public function index()
     {
-        //
+        $posts = Post::with('user')
+            // ->withCount('likes', 'comments')
+            ->latest()
+            ->paginate(10);
+
+        return view('posts.index', compact('posts'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // GET /posts/create
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // POST /posts
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'caption' => 'required|string|max:255',
+        ]);
+
+        $request->user()->posts()->create($validated);
+
+        return redirect()->route('posts.index')
+            ->with('success', 'Post berhasil dibuat.');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // GET /posts/{post} -> Detail post
     public function show(Post $post)
     {
-        //
+        $post->load('user', 'comments.user');
+
+        return view('posts.show', compact('post'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Post $post)
+    // GET /posts/{post}/edit
+    public function edit(Request $request, Post $post)
     {
-        //
+        if ($post->user_id !== $request->user()->id) {
+            abort(403, 'Anda tidak berhak mengedit post ini.');
+        }
+
+        return view('posts.edit', compact('post'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // PUT /posts/{post}
     public function update(Request $request, Post $post)
     {
-        //
+        if ($post->user_id !== $request->user()->id) {
+            abort(403, 'Anda tidak berhak mengedit post ini.');
+        }
+
+        $validated = $request->validate([
+            'caption' => 'required|string|max:255',
+        ]);
+
+        $post->update($validated);
+
+        return redirect()->route('posts.index')
+            ->with('success', 'Post berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Post $post)
+    // DELETE /posts/{post}
+    public function destroy(Request $request, Post $post)
     {
-        //
+        if ($post->user_id !== $request->user()->id) {
+            abort(403, 'Anda tidak berhak menghapus post ini.');
+        }
+
+        $post->delete();
+
+        return redirect()->route('posts.index')
+            ->with('success', 'Post berhasil dihapus.');
     }
 }
