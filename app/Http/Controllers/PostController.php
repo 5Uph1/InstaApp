@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
-    // GET /posts -> Feed
     public function index()
     {
         $posts = Post::with('user')
@@ -18,18 +18,21 @@ class PostController extends Controller
         return view('posts.index', compact('posts'));
     }
 
-    // GET /posts/create
     public function create()
     {
         return view('posts.create');
     }
 
-    // POST /posts
     public function store(Request $request)
     {
         $validated = $request->validate([
             'caption' => 'required|string|max:255',
+            'image'   => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // max dalam KB (2MB)
         ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('posts', 'public');
+        }
 
         $request->user()->posts()->create($validated);
 
@@ -37,7 +40,6 @@ class PostController extends Controller
             ->with('success', 'Post berhasil dibuat.');
     }
 
-    // GET /posts/{post} -> Detail post
     public function show(Post $post)
     {
         $post->load('user', 'comments.user');
@@ -45,7 +47,6 @@ class PostController extends Controller
         return view('posts.show', compact('post'));
     }
 
-    // GET /posts/{post}/edit
     public function edit(Request $request, Post $post)
     {
         if ($post->user_id !== $request->user()->id) {
@@ -55,7 +56,6 @@ class PostController extends Controller
         return view('posts.edit', compact('post'));
     }
 
-    // PUT /posts/{post}
     public function update(Request $request, Post $post)
     {
         if ($post->user_id !== $request->user()->id) {
@@ -64,7 +64,17 @@ class PostController extends Controller
 
         $validated = $request->validate([
             'caption' => 'required|string|max:255',
+            'image'   => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        if ($request->hasFile('image')) {
+            // Hapus gambar lama kalau ada, supaya storage tidak menumpuk file sampah
+            if ($post->image) {
+                Storage::disk('public')->delete($post->image);
+            }
+
+            $validated['image'] = $request->file('image')->store('posts', 'public');
+        }
 
         $post->update($validated);
 
@@ -72,11 +82,14 @@ class PostController extends Controller
             ->with('success', 'Post berhasil diperbarui.');
     }
 
-    // DELETE /posts/{post}
     public function destroy(Request $request, Post $post)
     {
         if ($post->user_id !== $request->user()->id) {
             abort(403, 'Anda tidak berhak menghapus post ini.');
+        }
+
+        if ($post->image) {
+            Storage::disk('public')->delete($post->image);
         }
 
         $post->delete();

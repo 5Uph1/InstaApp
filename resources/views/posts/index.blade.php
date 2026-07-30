@@ -20,6 +20,12 @@
                 <div class="text-sm text-gray-500">
                     {{ $post->user->name }} • {{ $post->created_at->diffForHumans() }}
                 </div>
+
+                @if ($post->image)
+                    <img src="{{ Storage::url($post->image) }}" alt="Post image"
+                        class="mt-2 rounded max-h-96 w-full object-cover">
+                @endif
+
                 <p class="mt-2">{{ $post->caption }}</p>
 
                 <div class="mt-3 text-sm text-gray-600 flex gap-4">
