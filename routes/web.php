@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
@@ -16,8 +17,13 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('posts', PostController::class);
 
+    // Like
     Route::post('posts/{post}/like', [LikeController::class, 'store'])->name('posts.like');
     Route::delete('posts/{post}/like', [LikeController::class, 'destroy'])->name('posts.unlike');
+
+    // Comment
+    Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 });
 
 Route::middleware('auth')->group(function () {
