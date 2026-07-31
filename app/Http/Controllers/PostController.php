@@ -58,9 +58,7 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
-        if ($post->user_id !== $request->user()->id) {
-            abort(403, 'Anda tidak berhak mengedit post ini.');
-        }
+        $this->authorize('update', $post);
 
         $validated = $request->validate([
             'caption' => 'required|string|max:255',
@@ -82,11 +80,9 @@ class PostController extends Controller
             ->with('success', 'Post berhasil diperbarui.');
     }
 
-    public function destroy(Request $request, Post $post)
+    public function destroy(Post $post)
     {
-        if ($post->user_id !== $request->user()->id) {
-            abort(403, 'Anda tidak berhak menghapus post ini.');
-        }
+        $this->authorize('delete', $post);
 
         if ($post->image) {
             Storage::disk('public')->delete($post->image);

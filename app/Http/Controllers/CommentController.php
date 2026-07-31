@@ -22,11 +22,9 @@ class CommentController extends Controller
         return back()->with('success', 'Komentar berhasil ditambahkan.');
     }
 
-    public function destroy(Request $request, Comment $comment)
+    public function destroy(Comment $comment)
     {
-        if ($comment->user_id !== $request->user()->id) {
-            abort(403, 'Anda tidak memiliki akses untuk menghapus komentar ini.');
-        }
+        $this->authorize('delete', $comment);
 
         $comment->delete();
 
