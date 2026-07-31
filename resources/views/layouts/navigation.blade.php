@@ -97,9 +97,6 @@
             <x-responsive-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')">
                 Feed
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('posts.create')" :active="request()->routeIs('posts.create')">
-                Buat Post Baru
-            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
