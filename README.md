@@ -162,7 +162,7 @@ Login menggunakan akun dummy (lihat Langkah 6) atau register akun baru.
 # 📂 Struktur Project
 
 ---
-
+```
 instaapp/
 ├── app/
 ├── bootstrap/
@@ -177,7 +177,7 @@ instaapp/
 ├── composer.json
 ├── package.json
 └── README.md
-
+```
 ---
 
 # ✨ Fitur
