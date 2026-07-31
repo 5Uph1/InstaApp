@@ -108,11 +108,22 @@ DB_PASSWORD=
 
 ---
 
-### 6. Jalankan Migration
+### 6. Jalankan Migration & Seeder
+
+Jalankan migration sekaligus seeding data dummy (post, like, komentar):
 
 ```bash
-php artisan migrate
+php artisan migrate:fresh --seed
 ```
+
+Setelah selesai, tersedia akun berikut untuk login:
+
+```text
+Email    : test@gmail.com
+Password : password
+```
+
+> Perintah ini akan menghapus seluruh data di database sebelum migrate ulang. Kalau hanya ingin migrate tanpa reset data, gunakan `php artisan migrate` saja (tanpa seeding).
 
 ---
 
@@ -144,11 +155,14 @@ Buka browser.
 http://127.0.0.1:8000
 ```
 
+Login menggunakan akun dummy (lihat Langkah 6) atau register akun baru.
+
 ---
 
 # 📂 Struktur Project
 
-```
+---
+
 instaapp/
 ├── app/
 ├── bootstrap/
@@ -163,7 +177,6 @@ instaapp/
 ├── composer.json
 ├── package.json
 └── README.md
-```
 
 ---
 
@@ -178,32 +191,3 @@ instaapp/
 - [x] Responsive UI
 
 ---
-
-# 🤝 Kontribusi
-
-1. Fork repository.
-2. Buat branch baru.
-
-```bash
-git checkout -b feature/nama-fitur
-```
-
-3. Commit perubahan.
-
-```bash
-git commit -m "feat: menambahkan fitur baru"
-```
-
-4. Push branch.
-
-```bash
-git push origin feature/nama-fitur
-```
-
-5. Buat Pull Request.
-
----
-
-# 📄 License
-
-Project ini dibuat untuk keperluan **Technical Test** dan tujuan pembelajaran.
